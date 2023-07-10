@@ -7,6 +7,7 @@ import kz.inspiredsamat.qazpay.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -20,9 +21,11 @@ import java.util.stream.Collectors;
 public class UserService implements IUserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDTO createNewUser(User newUserBody) {
+        newUserBody.setPassword(passwordEncoder.encode(newUserBody.getPassword()));
         User createdUser = userRepository.save(newUserBody);
         log.info("User with id {} was created", createdUser.getId());
         return entityToDTO(createdUser);
@@ -48,19 +51,9 @@ public class UserService implements IUserService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public UserDTO findByUsername(String username) {
-        User userFromDB = userRepository.findByUsername(username);
-        if (userFromDB == null) {
-            log.error("User with username {} does not exist");
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-
-        return entityToDTO(userFromDB);
-    }
-
     private UserDTO entityToDTO(User user) {
         UserDTO userDTO = new UserDTO();
+        userDTO.setId(user.getId());
         userDTO.setFirstName(user.getFirstName());
         userDTO.setLastName(user.getLastName());
         userDTO.setEmail(user.getEmail());

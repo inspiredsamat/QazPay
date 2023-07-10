@@ -1,8 +1,11 @@
 package kz.inspiredsamat.qazpay.service;
 
 import kz.inspiredsamat.qazpay.model.Account;
+import kz.inspiredsamat.qazpay.model.dto.AccountDTO;
 
 public interface IAccountService {
 
-    Account createNewAccount(Account newAccountBody);
+    AccountDTO createNewAccount(Account newAccountBody);
+
+    AccountDTO getAccountById(Long id);
 }

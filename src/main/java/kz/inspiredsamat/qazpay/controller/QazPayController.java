@@ -3,19 +3,19 @@ package kz.inspiredsamat.qazpay.controller;
 import kz.inspiredsamat.qazpay.model.Account;
 import kz.inspiredsamat.qazpay.model.Transfer;
 import kz.inspiredsamat.qazpay.model.User;
+import kz.inspiredsamat.qazpay.model.dto.AccountDTO;
+import kz.inspiredsamat.qazpay.model.dto.TransferDTO;
 import kz.inspiredsamat.qazpay.model.dto.UserDTO;
 import kz.inspiredsamat.qazpay.service.IAccountService;
 import kz.inspiredsamat.qazpay.service.ITransferService;
 import kz.inspiredsamat.qazpay.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/qazpay/api")
@@ -26,7 +26,7 @@ public class QazPayController {
     private final ITransferService transferService;
     private final IAccountService accountService;
 
-    @PostMapping("/users")
+    @PostMapping("/users/register")
     public ResponseEntity<UserDTO> createNewUser(@RequestBody User newUserBody) {
         UserDTO createdUser = userService.createNewUser(newUserBody);
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/users/" + createdUser.getId()).toUriString());
@@ -34,14 +34,36 @@ public class QazPayController {
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<Transfer> makeTransfer(@RequestBody Transfer transferBody) {
-        return ResponseEntity.ok(transferService.makeTransfer(transferBody));
+    public ResponseEntity<TransferDTO> makeTransfer(@RequestBody Transfer transferBody) {
+        TransferDTO savedTransfer = transferService.makeTransfer(transferBody);
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/transfers/" + savedTransfer.getId()).toUriString());
+        return ResponseEntity.created(uri).body(savedTransfer);
     }
 
     @PostMapping("/accounts")
-    public ResponseEntity<Account> createNewAccount(@RequestBody Account newAccountBody) {
-        Account createdAccount = accountService.createNewAccount(newAccountBody);
+    public ResponseEntity<AccountDTO> createNewAccount(@RequestBody Account newAccountBody) {
+        AccountDTO createdAccount = accountService.createNewAccount(newAccountBody);
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/accounts/" + createdAccount.getId()).toUriString());
-        return ResponseEntity.created(uri).body(newAccountBody);
+        return ResponseEntity.created(uri).body(createdAccount);
+    }
+
+    @GetMapping("/accounts/{id}")
+    public ResponseEntity<AccountDTO> getAccountById(@PathVariable Long id) {
+        return ResponseEntity.ok(accountService.getAccountById(id));
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUserById(id));
+    }
+
+    @GetMapping("/transfers/{id}")
+    public ResponseEntity<TransferDTO> getTransferById(@PathVariable Long id) {
+        return ResponseEntity.ok(transferService.getTransferById(id));
     }
 }

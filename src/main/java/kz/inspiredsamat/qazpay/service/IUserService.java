@@ -12,6 +12,4 @@ public interface IUserService {
     UserDTO getUserById(Long id);
 
     List<UserDTO> getAllUsers();
-
-    UserDTO findByUsername(String username);
 }
