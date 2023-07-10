@@ -29,21 +29,21 @@ public class QazPayController {
     @PostMapping("/users/register")
     public ResponseEntity<UserDTO> createNewUser(@RequestBody User newUserBody) {
         UserDTO createdUser = userService.createNewUser(newUserBody);
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/users/" + createdUser.getId()).toUriString());
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/qazpay/api/users/" + createdUser.getId()).toUriString());
         return ResponseEntity.created(uri).body(createdUser);
     }
 
     @PostMapping("/transfer")
     public ResponseEntity<TransferDTO> makeTransfer(@RequestBody Transfer transferBody) {
         TransferDTO savedTransfer = transferService.makeTransfer(transferBody);
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/transfers/" + savedTransfer.getId()).toUriString());
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/qazpay/api/transfers/" + savedTransfer.getId()).toUriString());
         return ResponseEntity.created(uri).body(savedTransfer);
     }
 
     @PostMapping("/accounts")
     public ResponseEntity<AccountDTO> createNewAccount(@RequestBody Account newAccountBody) {
         AccountDTO createdAccount = accountService.createNewAccount(newAccountBody);
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/accounts/" + createdAccount.getId()).toUriString());
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/qazpay/api/accounts/" + createdAccount.getId()).toUriString());
         return ResponseEntity.created(uri).body(createdAccount);
     }
 
